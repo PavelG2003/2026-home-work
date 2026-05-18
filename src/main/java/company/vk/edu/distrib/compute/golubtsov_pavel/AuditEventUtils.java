@@ -7,6 +7,7 @@ import java.util.Base64;
 
 final class AuditEventUtils {
     private static final String SEPARATOR = "\t";
+    private static final int AUDIT_EVENT_PARTS = 3;
 
     private AuditEventUtils() {
     }
@@ -20,8 +21,8 @@ final class AuditEventUtils {
     }
 
     static AuditEvent decode(String data) {
-        String[] parts = data.split(SEPARATOR, 3);
-        if (parts.length != 3) {
+        String[] parts = data.split(SEPARATOR, AUDIT_EVENT_PARTS);
+        if (parts.length != AUDIT_EVENT_PARTS) {
             throw new IllegalArgumentException("Invalid audit event: " + data);
         }
 

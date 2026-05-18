@@ -13,21 +13,20 @@ import java.util.Map;
 
 public class PGCluster implements KVCluster {
     private static final Logger log = LoggerFactory.getLogger(PGCluster.class);
-    private final List<Integer> ports;
     private final List<String> endpoints;
     private final Map<String, KVService> runningNodes;
     private final Map<String, Integer> endpointToPort;
 
     public PGCluster(List<Integer> ports) {
-        this.ports = List.copyOf(ports);
-        this.endpoints = this.ports.stream()
+        List<Integer> clusterPorts = List.copyOf(ports);
+        this.endpoints = clusterPorts.stream()
                 .map(port -> "http://localhost:" + port)
                 .toList();
         this.runningNodes = new HashMap<>();
         this.endpointToPort = new HashMap<>();
 
-        for (int i = 0; i < this.ports.size(); i++) {
-            endpointToPort.put(this.endpoints.get(i), this.ports.get(i));
+        for (int i = 0; i < clusterPorts.size(); i++) {
+            endpointToPort.put(this.endpoints.get(i), clusterPorts.get(i));
         }
     }
 
@@ -38,8 +37,13 @@ public class PGCluster implements KVCluster {
 
     @Override
     public void start() {
-        for (String endpoint : endpoints) {
-            start(endpoint);
+        try {
+            for (String endpoint : endpoints) {
+                start(endpoint);
+            }
+        } catch (RuntimeException e) {
+            stop();
+            throw e;
         }
     }
 

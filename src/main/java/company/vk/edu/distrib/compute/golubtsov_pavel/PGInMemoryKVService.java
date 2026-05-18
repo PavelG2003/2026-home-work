@@ -32,7 +32,7 @@ public class PGInMemoryKVService implements KVService {
                                String selfEndpoint,
                                List<String> clusterEndpoints)
             throws IOException {
-        this.server = HttpServer.create(new InetSocketAddress(port), 0);
+        this.server = HttpServer.create(new InetSocketAddress("localhost", port), 0);
         this.dao = dao;
         this.selfEndpoint = selfEndpoint;
         this.shardResolver = new ShardResolver(clusterEndpoints);
@@ -127,7 +127,7 @@ public class PGInMemoryKVService implements KVService {
 
     @Override
     public void stop() {
-        server.stop(1);
+        server.stop(0);
         log.info("Stopped");
     }
 
